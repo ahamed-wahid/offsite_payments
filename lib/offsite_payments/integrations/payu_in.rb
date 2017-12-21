@@ -3,9 +3,11 @@ module OffsitePayments #:nodoc:
     module PayuIn
       mattr_accessor :test_url
       mattr_accessor :production_url
+      mattr_accessor :partner_identifier
 
       self.test_url = 'https://test.payu.in/_payment.php'
       self.production_url = 'https://secure.payu.in/_payment.php'
+      self.partner_identifier ='partner:shopify'
 
       def self.service_url
         OffsitePayments.mode == :production ? self.production_url : self.test_url
@@ -70,6 +72,9 @@ module OffsitePayments #:nodoc:
           super
           @options = options
           self.pg = 'CC'
+          # Set udf5 paramter with partner identifier
+          # to enbale PayU Money to track the Payment calls made from Shopify
+          self.var5 = var5+ partner_identifier
         end
 
         def form_fields
